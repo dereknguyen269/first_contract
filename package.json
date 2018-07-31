@@ -17,6 +17,7 @@
     "chai-bignumber": "2.0.2"
   },
   "dependencies": {
+    "npm": "^6.2.0",
     "truffle-hdwallet-provider": "0.0.5"
   }
 }

@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <title>Fcontracts</title>
+    <script src="https://cdn.rawgit.com/ethereum/web3.js/develop/dist/web3.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script>
+      if (typeof web3 !== 'undefined') {
+        web3Provider = web3.currentProvider;
+      } else {
+        web3Provider = new Web3.providers.HttpProvider('http://localhost:7545');
+      }
+      var web3 = new Web3(web3Provider);
+      // abi array at build/FContracts.json
+      var abi = [
+        {
+          "constant": false,
+          "inputs": [
+            {
+              "name": "fcontract",
+              "type": "uint256"
+            }
+          ],
+          "name": "updateFcontracts",
+          "outputs": [],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [
+            {
+              "name": "addr",
+              "type": "address"
+            }
+          ],
+          "name": "getFcontracts",
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+      var FContract = web3.eth.contract(abi);
+      var contractAddress = '0x726ADAef226F024F89Ed376309F6bA56a654C8Ee'
+      var instance = FContract.at(contractAddress);
+      var buyerAddress = '0x6713be6f7e3fb5ec0d0fa4e75d059afb6e7c0fda'
+      instance.getFcontracts(buyerAddress, function (err, res) {
+        $('#numShares').text(res.toString())
+      })
+      function buy() {
+        instance.updateFcontracts(1, { from: buyerAddress }, function (err, res) {
+          console.log('txn', 'https://rinkeby.etherscan.io/tx/' + res)
+        })
+      }
+    </script>
+  </head>
+
+  <body>
+    <p id="numShares"></p>
+    <button onclick='buy()'>Buy</button>
+  </body>
+</html>
