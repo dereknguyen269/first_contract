@@ -14,10 +14,11 @@ $.getJSON('js/Fcontracts.json', function(data) {
   initFcontracts(abi)
 });
 
+var accounts = web3.eth.accounts;
 var FContract;
 var contractAddress = '0x726ADAef226F024F89Ed376309F6bA56a654C8Ee'
 var instance;
-var buyerAddress = '0x6713be6f7e3fb5ec0d0fa4e75d059afb6e7c0fda'
+var buyerAddress = accounts[0]
 
 function initFcontracts(abi) {
   FContract = web3.eth.contract(abi);
