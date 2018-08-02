@@ -6,18 +6,11 @@ if (typeof web3 !== 'undefined') {
 }
 // Just for locally
 // web3Provider = new Web3.providers.HttpProvider('http://localhost:7545');
-var web3 = new Web3(web3Provider);
 
-$.getJSON('js/Fcontracts.json', function(data) {
-}).then(response => {
-  var abi = response.abi;
-  initFcontracts(abi);
-});
-var accounts;
-var FContract;
+var web3 = new Web3(web3Provider);
+var FContract, accounts, contractAddress, buyerAddress, instance;
 var contractAddress = '0x3055aaB2955ed6876B5779795BC26f78755A7129' // https://ropsten.etherscan.io/address/0x3055aab2955ed6876b5779795bc26f78755a7129
-var instance;
-var buyerAddress;
+var abiData = $('.abi').data('abi').abi;
 
 web3.eth.getAccountsPromise = function () {
     return new Promise(function (resolve, reject) {
@@ -48,3 +41,5 @@ function buy() {
     console.log('txn', 'https://ropsten.etherscan.io/tx/' + res)
   });
 }
+
+initFcontracts(abiData);
