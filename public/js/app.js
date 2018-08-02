@@ -31,10 +31,6 @@ web3.eth.getAccountsPromise = function () {
     });
 };
 
-web3.eth.getAccountsPromise().then(function(res){
-  accounts = res;
-});
-
 function initFcontracts(abi) {
   web3.eth.getAccountsPromise().then(function(res){
     accounts = res;
