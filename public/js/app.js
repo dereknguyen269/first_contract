@@ -5,7 +5,7 @@ App = {
   instance: null,
   FContract: null,
   buyerAddress: null,
-  contractAddress: '0x3055aaB2955ed6876B5779795BC26f78755A7129',
+  contractAddress: $('body').data('contract-address'),
 
   init: function () {
     return App.initWeb3();
@@ -33,14 +33,16 @@ App = {
   },
 
   initContract: function () {
-    abiData = $('.abi').data('abi').abi;
-    App.web3.eth.getAccountsPromise().then(function(res){
-      App.accounts = res;
-      App.buyerAddress = App.accounts[0];
-      App.FContract = App.web3.eth.contract(abiData);
-      App.instance = App.FContract.at(App.contractAddress);
-      App.instance.getFcontracts(App.buyerAddress, function (err, res) {
-        $('#numContracts').text(res.toString())
+    $.getJSON('js/Fcontracts.json', function (data) {
+      abiData = data.abi;
+      App.web3.eth.getAccountsPromise().then(function(res){
+        App.accounts = res;
+        App.buyerAddress = App.accounts[0];
+        App.FContract = App.web3.eth.contract(abiData);
+        App.instance = App.FContract.at(App.contractAddress);
+        App.instance.getFcontracts(App.buyerAddress, function (err, res) {
+          $('#numContracts').text(res.toString())
+        });
       });
     });
   },

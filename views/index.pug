@@ -1,14 +1,12 @@
 html
   head
     title= title
-  body
+  body(data-contract-address=contractAddress)
     h1= title
 
     p#numContracts
 
     button(onclick='App.callAction()') Call Action
-
-    div.abi(data-abi=obj)
 
     script(src="https://code.jquery.com/jquery-3.1.1.min.js")
     script(src="js/app.js")
