@@ -1,45 +1,60 @@
-// Using for testnet or mainnet
-if (typeof web3 !== 'undefined') {
-  web3Provider = web3.currentProvider;
-} else {
-  web3Provider = new Web3.providers.HttpProvider('http://localhost:7545');
-}
-// Just for locally
-// web3Provider = new Web3.providers.HttpProvider('http://localhost:7545');
+App = {
+  web3Provider: null,
+  web3: null,
+  accounts: [],
+  instance: null,
+  FContract: null,
+  buyerAddress: null,
+  contractAddress: '0x3055aaB2955ed6876B5779795BC26f78755A7129',
 
-var web3 = new Web3(web3Provider);
-var FContract, accounts, contractAddress, buyerAddress, instance;
-var contractAddress = '0x3055aaB2955ed6876B5779795BC26f78755A7129' // https://ropsten.etherscan.io/address/0x3055aab2955ed6876b5779795bc26f78755a7129
-var abiData = $('.abi').data('abi').abi;
+  init: function () {
+    return App.initWeb3();
+  },
 
-web3.eth.getAccountsPromise = function () {
-    return new Promise(function (resolve, reject) {
-        web3.eth.getAccounts(function (e, accounts) {
-            if (e != null) {
-                reject(e);
-            } else {
-                resolve(accounts);
-            }
+  initWeb3: function () {
+    if (typeof web3 !== 'undefined') {
+      web3Provider = web3.currentProvider;
+    } else {
+      web3Provider = new Web3.providers.HttpProvider('http://localhost:7545');
+    }
+    App.web3 = new Web3(web3Provider);
+    App.web3.eth.getAccountsPromise = function () {
+        return new Promise(function (resolve, reject) {
+            App.web3.eth.getAccounts(function (e, accounts) {
+                if (e != null) {
+                    reject(e);
+                } else {
+                    resolve(accounts);
+                }
+            });
         });
+    };
+    return App.initContract();
+  },
+
+  initContract: function () {
+    abiData = $('.abi').data('abi').abi;
+    App.web3.eth.getAccountsPromise().then(function(res){
+      App.accounts = res;
+      App.buyerAddress = App.accounts[0];
+      App.FContract = App.web3.eth.contract(abiData);
+      App.instance = App.FContract.at(App.contractAddress);
+      App.instance.getFcontracts(App.buyerAddress, function (err, res) {
+        $('#numContracts').text(res.toString())
+      });
     });
-};
+  },
 
-function initFcontracts(abi) {
-  web3.eth.getAccountsPromise().then(function(res){
-    accounts = res;
-    buyerAddress = accounts[0];
-    FContract = web3.eth.contract(abi);
-    instance = FContract.at(contractAddress);
-    instance.getFcontracts(buyerAddress, function (err, res) {
-      $('#numContracts').text(res.toString())
-    })
-  });
+  callAction: function () {
+    App.instance.updateFcontracts(1, { from: App.buyerAddress }, function (err, res) {
+      console.log('Call Action has been successfully \n');
+      console.log('txn', 'https://ropsten.etherscan.io/tx/' + res)
+    });
+  }
 }
 
-function buy() {
-  instance.updateFcontracts(1, { from: buyerAddress }, function (err, res) {
-    console.log('txn', 'https://ropsten.etherscan.io/tx/' + res)
+$(function () {
+  $( document ).ready(function() {
+    App.init();
   });
-}
-
-initFcontracts(abiData);
+});
